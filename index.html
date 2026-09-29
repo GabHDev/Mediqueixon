@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Núcleo de Triagem — Enfermagem</title>
+<link rel="icon" type="image/x-icon" href="2267fbb2-ce00-4668-9ef2-6078c14a5ddc.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topo" id="topo" hidden>
+  <div class="faixa">
+    <button class="marca" id="voltarInicio" style="background:none;border:none;cursor:pointer;color:inherit">
+      <span class="pulso"></span> Núcleo de Triagem
+    </button>
+    <div class="direita">
+      <span class="quem" id="quemSou"></span>
+      <button class="btn neutro pequeno" id="btnTema">Tema</button>
+      <button class="btn neutro pequeno" id="btnSair">Sair</button>
+    </div>
+  </div>
+</header>
+
+
+<main>
+<section class="tela ativa" id="tela-inicio">
+  <div class="faixa capa">
+    <div class="colunas">
+      <div>
+        <h1>Quem chega primeiro não é quem é atendido primeiro. Quem corre mais risco é.</h1>
+        <p class="lede">Este é o sistema de acolhimento e classificação de risco da unidade. O paciente preenche a própria ficha, a enfermagem mede os sinais vitais e define a cor do atendimento.</p>
+        <div class="reguacor" aria-hidden="true">
+          <div class="v">Verde · pode aguardar</div>
+          <div class="a">Amarelo · prioridade</div>
+          <div class="r">Vermelho · risco de vida</div>
+        </div>
+        <p style="font-size:.88rem;color:var(--tinta-2)">Em emergência com risco imediato, procure a equipe no balcão ou ligue 192. Não espere pelo sistema.</p>
+      </div>
+      <div>
+        <div class="portas">
+          <button class="porta" data-ir="paciente">
+            <span class="num">1</span>
+            <span><b>Sou paciente</b><small>Cadastrar meus dados, informar sintomas e marcar minha dor na escala.</small></span>
+            <span class="seta">›</span>
+          </button>
+          <button class="porta" data-ir="enfermeiro">
+            <span class="num">2</span>
+            <span><b>Sou enfermeiro(a)</b><small>Ver a fila, abrir a ficha completa, registrar sinais vitais e classificar o risco.</small></span>
+            <span class="seta">›</span>
+          </button>
+          <button class="porta" data-ir="tecnico">
+            <span class="num">3</span>
+            <span><b>Sou técnico(a) em enfermagem</b><small>Registrar P.A., P.A.G. e demais medidas. Dados sensíveis aparecem ocultos.</small></span>
+            <span class="seta">›</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="faixa">Sistema de demonstração acadêmica · Dados tratados conforme a Lei 13.709/2018 (LGPD)</footer>
+</section>
+
+<section class="tela" id="tela-manual">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px">
+    <h1>Manual do sistema</h1>
+    <p class="lede">Escolha o seu perfil e veja exatamente o que fazer, na ordem.</p>
+    <div class="abas" role="tablist" data-grupo="manual">
+      <button role="tab" aria-selected="true" data-painel="m-paciente">Paciente</button>
+      <button role="tab" aria-selected="false" data-painel="m-enf">Enfermeiro(a)</button>
+      <button role="tab" aria-selected="false" data-painel="m-tec">Técnico(a)</button>
+      <button role="tab" aria-selected="false" data-painel="m-lgpd">LGPD</button>
+    </div>
+
+    <div class="painel ativo" id="m-paciente">
+      <div class="cartao">
+        <h2>Paciente</h2>
+        <ol class="passos">
+          <li>Na página inicial, toque em <b>Sou paciente</b>.</li>
+          <li>Primeira vez? Use a aba <b>Criar cadastro</b>. Preencha nome, nome social (se usar), CPF, RG, data de nascimento, endereço, doenças, alergias e os contatos de emergência. O CPF e uma senha serão seus dados de entrada.</li>
+          <li>Marque o consentimento da LGPD. Sem ele o cadastro não é salvo — é a base legal que autoriza a unidade a tratar seus dados.</li>
+          <li>Já tem cadastro? Aba <b>Entrar</b>: CPF + senha.</li>
+          <li>Dentro do painel, abra <b>Abrir atendimento</b>: descreva o que está sentindo, há quanto tempo, quem veio com você e <b>escolha a carinha</b> que representa sua dor, de 1 a 10.</li>
+          <li>Envie. Sua ficha entra na fila da enfermagem na hora e você recebe uma senha de chamada.</li>
+          <li>Em <b>Meu histórico</b> você vê todas as suas idas anteriores, a cor que recebeu e o que foi registrado.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="painel" id="m-enf">
+      <div class="cartao">
+        <h2>Enfermeiro(a)</h2>
+        <ol class="passos">
+          <li>Página inicial → <b>Sou enfermeiro(a)</b>. Entre com nome, CPF, RG e número do COREN. Na primeira vez o sistema cria o seu acesso com esses dados e uma senha.</li>
+          <li>Você cai na <b>fila de triagem</b>, ordenada por prioridade: primeiro quem ainda não foi classificado, depois vermelho, amarelo e verde.</li>
+          <li>Clique na linha do paciente. À direita abre a ficha completa: identificação, doenças, alergias, medicação de uso, acompanhante, motivo da vinda e a dor marcada.</li>
+          <li>Preencha os sinais vitais: <b>P.A.</b>, <b>P.A.G.</b>, frequência cardíaca, frequência respiratória, temperatura, saturação e glicemia.</li>
+          <li>Escolha a <b>bolinha de risco</b>: verde (menos arriscado), amarelo (importante) ou vermelho (risco de vida). A cor aparece na tabela para toda a equipe imediatamente.</li>
+          <li>Escreva a evolução em <b>Anotações da enfermagem</b> e salve. Ao fim, use <b>Encaminhar / finalizar</b> — a ficha sai da fila e vira histórico do paciente.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="painel" id="m-tec">
+      <div class="cartao">
+        <h2>Técnico(a) em enfermagem</h2>
+        <ol class="passos">
+          <li>Página inicial → <b>Sou técnico(a)</b>. Entre com nome, CPF, RG e número do COREN (registro de técnico).</li>
+          <li>A fila é a mesma que o enfermeiro vê, com uma diferença: <b>CPF e RG dos pacientes aparecem mascarados</b> (•••.456.•••-••). É o princípio da necessidade da LGPD — você vê só o que precisa para o cuidado.</li>
+          <li>Você registra sinais vitais e medidas normalmente, e pode <b>sugerir</b> a cor do risco.</li>
+          <li>Toda cor marcada por técnico fica com a etiqueta <b>“a confirmar”</b> até um enfermeiro validar. A classificação de risco é privativa do enfermeiro (Resolução COFEN 423/2012).</li>
+          <li>Finalizar atendimento também é ação do enfermeiro.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="painel" id="m-lgpd">
+      <div class="cartao">
+        <h2>O que o sistema faz para cumprir a LGPD</h2>
+        <p>Dado de saúde é <b>dado pessoal sensível</b> (art. 5º, II da Lei 13.709/2018). Ele exige cuidado maior do que um dado comum. O que está implementado aqui:</p>
+        <ul>
+          <li><b>Consentimento registrado</b> — data, hora e versão do termo ficam gravadas junto do cadastro.</li>
+          <li><b>Finalidade declarada</b> — os dados são coletados para triagem e atendimento, e nada mais.</li>
+          <li><b>Minimização e necessidade</b> — cada perfil vê o mínimo necessário: o técnico recebe CPF e RG mascarados.</li>
+          <li><b>Controle de acesso</b> — só entra quem se identifica; profissional entra com COREN.</li>
+          <li><b>Registro de operações (trilha de auditoria)</b> — quem abriu qual ficha, quem alterou o quê e quando. Fica em <b>Privacidade</b> na área do paciente.</li>
+          <li><b>Direitos do titular</b> — o paciente pode ver, exportar em arquivo e excluir seus dados pelo próprio painel (arts. 18 e 19).</li>
+        </ul>
+        <div class="aviso alerta"><b>O que falta para uso real em hospital:</b> HTTPS obrigatório, senhas com hash forte (bcrypt/argon2) no servidor, criptografia do banco em repouso, backup, política de retenção do prontuário (o CFM exige guarda mínima de 20 anos), nomeação de encarregado de dados (DPO) e relatório de impacto. Este projeto é uma demonstração acadêmica — não coloque dados reais de pacientes nele.</div>
+      </div>
+    </div>
+</section>
+
+<section class="tela" id="tela-paciente-entrada">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px;max-width:820px">
+    <h1>Área do paciente</h1>
+    <div class="abas" role="tablist" data-grupo="pac">
+      <button role="tab" aria-selected="true" data-painel="p-entrar">Entrar</button>
+      <button role="tab" aria-selected="false" data-painel="p-criar">Criar cadastro</button>
+    </div>
+
+    <div class="painel ativo" id="p-entrar">
+      <div class="cartao">
+        <div class="grade">
+          <div class="campo"><label for="le-cpf">CPF</label><input id="le-cpf" inputmode="numeric" placeholder="000.000.000-00" autocomplete="username"></div>
+          <div class="campo"><label for="le-senha">Senha</label><input id="le-senha" type="password" autocomplete="current-password"></div>
+        </div>
+        <div class="erro" id="le-erro"></div>
+        <button class="btn" id="btnEntrarPaciente">Entrar</button>
+      </div>
+    </div>
+
+    <div class="painel" id="p-criar">
+      <form id="formCadastro" novalidate>
+        <fieldset>
+          <legend>Identificação</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-nome">Nome completo (registro civil)</label><input id="c-nome" required autocomplete="name"></div>
+            <div class="campo"><label for="c-social">Nome social <span class="dica">(como quer ser chamado)</span></label><input id="c-social"></div>
+            <div class="campo"><label for="c-nasc">Data de nascimento</label><input id="c-nasc" type="date" required></div>
+            <div class="campo"><label for="c-cpf">CPF</label><input id="c-cpf" inputmode="numeric" placeholder="000.000.000-00" required></div>
+            <div class="campo"><label for="c-rg">RG</label><input id="c-rg" required></div>
+            <div class="campo"><label for="c-sus">Cartão SUS</label><input id="c-sus" inputmode="numeric"></div>
+            <div class="campo"><label for="c-govbr">Conta gov.br <span class="dica">(e-mail ou CPF da conta)</span></label><input id="c-govbr"></div>
+            <div class="campo"><label for="c-tel">Telefone</label><input id="c-tel" inputmode="tel" placeholder="(00) 00000-0000" required></div>
+            <div class="campo"><label for="c-sangue">Tipo sanguíneo</label>
+              <select id="c-sangue"><option value="">Não sei</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Endereço</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-cep">CEP</label><input id="c-cep" inputmode="numeric" placeholder="00000-000"></div>
+            <div class="campo"><label for="c-rua">Rua</label><input id="c-rua"></div>
+            <div class="campo"><label for="c-num">Número</label><input id="c-num"></div>
+            <div class="campo"><label for="c-bairro">Bairro</label><input id="c-bairro"></div>
+            <div class="campo"><label for="c-cidade">Cidade</label><input id="c-cidade"></div>
+            <div class="campo"><label for="c-uf">UF</label><input id="c-uf" maxlength="2" style="text-transform:uppercase"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Saúde</legend>
+          <div class="grade duas">
+            <div class="campo"><label for="c-alergia">Alergia a medicamentos <span class="dica">Escreva “nenhuma” se não tiver</span></label><textarea id="c-alergia" required placeholder="Ex.: dipirona, penicilina"></textarea></div>
+            <div class="campo"><label for="c-doencas">Doenças que já tem</label>
+              <div style="display:flex;flex-wrap:wrap;gap:12px 18px" id="c-doencas">
+                <label class="caixinha"><input type="checkbox" value="Diabetes"> Diabetes</label>
+                <label class="caixinha"><input type="checkbox" value="Hipertensão"> Hipertensão</label>
+                <label class="caixinha"><input type="checkbox" value="Problema cardíaco"> Problema cardíaco</label>
+                <label class="caixinha"><input type="checkbox" value="Asma"> Asma</label>
+                <label class="caixinha"><input type="checkbox" value="Epilepsia"> Epilepsia</label>
+                <label class="caixinha"><input type="checkbox" value="Doença renal"> Doença renal</label>
+                <label class="caixinha"><input type="checkbox" value="Gestante"> Gestante</label>
+              </div>
+            </div>
+            <div class="campo"><label for="c-outras">Outras doenças ou cirurgias anteriores</label><textarea id="c-outras"></textarea></div>
+            <div class="campo"><label for="c-medic">Medicamentos de uso contínuo</label><textarea id="c-medic" placeholder="Ex.: losartana 50mg, 1x ao dia"></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contato de emergência</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-em-nome">Nome</label><input id="c-em-nome" required></div>
+            <div class="campo"><label for="c-em-par">Parentesco</label><input id="c-em-par" placeholder="Mãe, irmão, vizinha..." required></div>
+            <div class="campo"><label for="c-em-tel">Telefone</label><input id="c-em-tel" inputmode="tel" required></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Acesso e consentimento</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-senha">Crie uma senha <span class="dica">mínimo 6 caracteres</span></label><input id="c-senha" type="password" required autocomplete="new-password"></div>
+            <div class="campo"><label for="c-senha2">Repita a senha</label><input id="c-senha2" type="password" required autocomplete="new-password"></div>
+          </div>
+          <label class="caixinha" style="margin-top:12px">
+            <input type="checkbox" id="c-consent">
+            <span>Autorizo a unidade de saúde a tratar meus dados pessoais e de saúde para fins de triagem, atendimento e histórico clínico, conforme a Lei 13.709/2018 (LGPD). Posso consultar, exportar ou pedir a exclusão dos meus dados a qualquer momento pelo painel. <b>Termo v1.0</b></span>
+          </label>
+          <div class="erro" id="c-erro"></div>
+          <button class="btn" type="submit" style="margin-top:6px">Criar cadastro</button>
+        </fieldset>
+      </form>
+    </div>
+    <button class="btn neutro" data-ir="inicio">Voltar ao início</button>
+  </div>
+</section>
+
+
+<section class="tela" id="tela-paciente-painel">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px">
+    <h1 id="pac-saudacao">Olá</h1>
+    <div class="abas" role="tablist" data-grupo="pacp">
+      <button role="tab" aria-selected="true" data-painel="pp-atend">Abrir atendimento</button>
+      <button role="tab" aria-selected="false" data-painel="pp-dados">Meus dados</button>
+      <button role="tab" aria-selected="false" data-painel="pp-hist">Meu histórico</button>
+      <button role="tab" aria-selected="false" data-painel="pp-priv">Privacidade</button>
+    </div>
+
+    <div class="painel ativo" id="pp-atend">
+      <div id="atendAberto"></div>
+      <form id="formAtend" class="cartao">
+        <h2>Por que você veio hoje?</h2>
+        <div class="grade duas">
+          <div class="campo"><label for="a-motivo">Motivo principal</label><input id="a-motivo" required placeholder="Ex.: dor no peito ao subir escada"></div>
+          <div class="campo"><label for="a-inicio">Começou quando?</label><input id="a-inicio" placeholder="Ex.: ontem à noite"></div>
+          <div class="campo" style="grid-column:1/-1"><label for="a-sintomas">Descreva os sintomas</label><textarea id="a-sintomas" required placeholder="O que sente, onde dói, se piora com alguma coisa, se teve febre, vômito..."></textarea></div>
+        </div>
+
+        <h3 style="margin-top:20px">Qual o tamanho da sua dor agora?</h3>
+        <p style="font-size:.9rem;color:var(--tinta-2);margin-bottom:4px">Toque na carinha que mais parece com você. 1 é quase nada, 10 é a pior dor que já sentiu.</p>
+        <div class="dor-lista" id="escalaDor" role="group" aria-label="Escala de dor de 1 a 10"></div>
+        <p class="dor-legenda" id="dorLegenda">Nenhuma carinha selecionada</p>
+
+        <fieldset style="margin-top:18px">
+          <legend>Acompanhante (se veio com alguém)</legend>
+          <div class="grade">
+            <div class="campo"><label for="ac-nome">Nome</label><input id="ac-nome"></div>
+            <div class="campo"><label for="ac-par">Grau de parentesco</label><input id="ac-par" placeholder="Filha, esposo, amigo..."></div>
+            <div class="campo"><label for="ac-rg">RG</label><input id="ac-rg"></div>
+            <div class="campo"><label for="ac-cpf">CPF</label><input id="ac-cpf" inputmode="numeric"></div>
+            <div class="campo"><label for="ac-tel">Telefone</label><input id="ac-tel" inputmode="tel"></div>
+            <div class="campo"><label for="ac-end">Onde reside</label><input id="ac-end"></div>
+          </div>
+        </fieldset>
+        <div class="erro" id="a-erro"></div>
+        <button class="btn" type="submit">Enviar para a triagem</button>
+      </form>
+    </div>
+
+    <div class="painel" id="pp-dados"><div class="cartao"><h2>Minha ficha</h2><div class="rolagem"><table class="ficha" id="tabelaMeusDados"></table></div></div></div>
+
+    <div class="painel" id="pp-hist">
+      <div class="cartao"><h2>Minhas idas ao hospital</h2><div id="histPaciente"></div></div>
+    </div>
+
+    <div class="painel" id="pp-priv">
+      <div class="cartao">
+        <h2>Seus direitos sobre seus dados</h2>
+        <p id="consentTexto" style="font-size:.9rem;color:var(--tinta-2)"></p>
+        <div class="linha-botoes">
+          <button class="btn neutro" id="btnExportar">Baixar meus dados</button>
+          <button class="btn perigo" id="btnExcluir">Excluir minha conta e meus dados</button>
+        </div>
+      </div>
+      <div class="cartao">
+        <h3>Quem acessou minha ficha</h3>
+        <div class="rolagem"><table id="tabelaAuditoria"><thead><tr><th>Quando</th><th>Quem</th><th>Perfil</th><th>O que fez</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tela" id="tela-prof-entrada">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px;max-width:760px">
+    <h1 id="prof-titulo">Área do enfermeiro</h1>
+    <p class="lede" id="prof-sub"></p>
+    <div class="cartao">
+      <div class="grade">
+        <div class="campo"><label for="f-nome">Nome completo</label><input id="f-nome" autocomplete="name"></div>
+        <div class="campo"><label for="f-cpf">CPF</label><input id="f-cpf" inputmode="numeric" placeholder="000.000.000-00"></div>
+        <div class="campo"><label for="f-rg">RG</label><input id="f-rg"></div>
+        <div class="campo"><label for="f-coren">Número do COREN</label><input id="f-coren" placeholder="Ex.: COREN-SP 123.456"></div>
+        <div class="campo"><label for="f-senha">Senha <span class="dica">criada no primeiro acesso</span></label><input id="f-senha" type="password" autocomplete="current-password"></div>
+      </div>
+      <div class="erro" id="f-erro"></div>
+      <button class="btn" id="btnEntrarProf">Entrar no plantão</button>
+    </div>
+    <button class="btn neutro" data-ir="inicio">Voltar ao início</button>
+  </div>
+</section>
+
+<!-- ====================== PROFISSIONAL: PAINEL ====================== -->
+<section class="tela" id="tela-prof-painel">
+  <div class="faixa" style="padding-top:24px;padding-bottom:50px">
+    <h1 style="margin-bottom:4px">Fila de triagem</h1>
+    <p class="lede" id="resumoFila"></p>
+    <div class="aviso" id="avisoPerfil"></div>
+    <div class="duas-colunas">
+      <div>
+        <div class="rolagem" style="margin-bottom:12px">
+          <table id="tabelaFila" style="min-width:420px">
+            <thead><tr><th>Risco</th><th>Paciente</th><th>Dor</th><th>Espera</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <label class="caixinha"><input type="checkbox" id="verFinalizados"> Mostrar também os atendimentos já finalizados</label>
+      </div>
+      <div id="fichaPaciente"><div class="cartao vazio">Selecione um paciente na fila para abrir a ficha.</div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<button class="discreto" id="btnManual" title="Manual do sistema"><span class="interro">?</span> Como usar o site</button>
+<div class="recado" id="recado" role="status" aria-live="polite"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
