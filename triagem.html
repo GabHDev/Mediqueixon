@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Núcleo de Triagem — Enfermagem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#0F2630;
+  --tinta-2:#3C5866;
+  --fundo:#EEF2F2;
+  --papel:#FFFFFF;
+  --linha:#D2DDDD;
+  --agua:#0C6E7C;
+  --agua-forte:#08525D;
+  --verde:#1E9E5A;
+  --amarelo:#E0A507;
+  --vermelho:#CE2727;
+  --sombra:0 1px 2px rgba(15,38,48,.08), 0 8px 24px -16px rgba(15,38,48,.35);
+  --r:10px;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --titulo:"Archivo",var(--sans);
+}
+:root:not([data-theme="light"]){
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --tinta:#E7EEEE; --tinta-2:#9DB2B8; --fundo:#0B1418; --papel:#132126;
+    --linha:#27383F; --agua:#3FB0BF; --agua-forte:#5FC7D4;
+    --verde:#3CC079; --amarelo:#F0BE3A; --vermelho:#F2564F;
+    --sombra:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.8);
+        }
+    }
+}
+:root[data-theme="dark"]{
+  --tinta:#E7EEEE; --tinta-2:#9DB2B8; --fundo:#0B1418; --papel:#132126;
+  --linha:#27383F; --agua:#3FB0BF; --agua-forte:#5FC7D4;
+  --verde:#3CC079; --amarelo:#F0BE3A; --vermelho:#F2564F;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--fundo); color:var(--tinta);
+  font-family:var(--sans); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+h1,h2,h3{font-family:var(--titulo); font-weight:700; letter-spacing:-.02em; line-height:1.15; margin:0 0 .4em}
+h1{font-size:clamp(1.9rem,4.4vw,2.9rem)}
+h2{font-size:1.4rem}
+h3{font-size:1.06rem}
+p{margin:0 0 1em; max-width:68ch}
+a{color:var(--agua)}
+button{font:inherit}
+:focus-visible{outline:3px solid var(--agua); outline-offset:2px; border-radius:4px}
+
+/* ---------- estrutura ---------- */
+.tela{display:none; animation:entra .25s ease both}
+.tela.ativa{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.faixa{width:100%; max-width:1180px; margin:0 auto; padding:0 20px}
+.topo{
+  position:sticky; top:0; z-index:40; background:var(--papel);
+  border-bottom:1px solid var(--linha);
+}
+.topo .faixa{display:flex; align-items:center; gap:14px; min-height:62px; flex-wrap:wrap}
+.marca{display:flex; align-items:center; gap:10px; font-family:var(--titulo); font-weight:700; letter-spacing:-.02em}
+.marca .pulso{width:26px;height:26px;border-radius:50%;background:var(--agua);position:relative;flex:0 0 auto}
+.marca .pulso::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--papel)}
+.topo .direita{margin-left:auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.quem{font-size:.85rem; color:var(--tinta-2)}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  background:var(--agua); color:#fff; border:1px solid var(--agua);
+  padding:10px 18px; border-radius:var(--r); cursor:pointer; font-weight:600;
+  transition:background .15s, transform .05s;
+}
+.btn:hover{background:var(--agua-forte); border-color:var(--agua-forte)}
+.btn:active{transform:translateY(1px)}
+.btn.neutro{background:transparent; color:var(--tinta); border-color:var(--linha)}
+.btn.neutro:hover{background:var(--fundo)}
+.btn.perigo{background:var(--vermelho); border-color:var(--vermelho)}
+.btn.pequeno{padding:6px 12px; font-size:.88rem}
+.btn[disabled]{opacity:.45; cursor:not-allowed}
+
+/* ---------- página inicial ---------- */
+.capa{padding:48px 0 30px}
+.capa .colunas{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:46px; align-items:start}
+@media(max-width:860px){.capa .colunas{grid-template-columns:1fr; gap:28px}}
+.capa p.lede{font-size:1.08rem; color:var(--tinta-2)}
+.reguacor{display:flex; border-radius:6px; overflow:hidden; margin:22px 0 14px; border:1px solid var(--linha)}
+.reguacor div{flex:1; padding:9px 12px; font-size:.78rem; font-weight:600; color:#fff}
+.reguacor .v{background:var(--verde)} .reguacor .a{background:var(--amarelo); color:#3a2c00} .reguacor .r{background:var(--vermelho)}
+.portas{display:grid; gap:14px}
+.porta{
+  display:grid; grid-template-columns:52px 1fr auto; gap:16px; align-items:center;
+  background:var(--papel); border:1px solid var(--linha); border-left:5px solid var(--agua);
+  border-radius:var(--r); padding:18px 20px; cursor:pointer; text-align:left; width:100%;
+  box-shadow:var(--sombra); color:inherit; transition:border-color .15s, transform .12s;
+}
+.porta:hover{border-left-color:var(--agua-forte); transform:translateX(3px)}
+.porta .num{font-family:var(--titulo); font-size:1.5rem; color:var(--agua); font-weight:700}
+.porta b{display:block; font-family:var(--titulo); font-size:1.12rem}
+.porta small{color:var(--tinta-2); display:block; font-size:.88rem; line-height:1.4}
+.porta .seta{color:var(--tinta-2); font-size:1.3rem}
+.discreto{
+  position:fixed; right:18px; bottom:18px; z-index:50;
+  display:flex; align-items:center; gap:8px; background:var(--papel);
+  border:1px solid var(--linha); color:var(--tinta-2); border-radius:999px;
+  padding:9px 14px 9px 11px; cursor:pointer; box-shadow:var(--sombra); font-size:.85rem;
+}
+.discreto:hover{color:var(--tinta); border-color:var(--agua)}
+.discreto .interro{
+  width:22px;height:22px;border-radius:50%;background:var(--agua);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:.8rem;flex:0 0 auto
+}
+
+/* ---------- cartões e formulários ---------- */
+.cartao{background:var(--papel); border:1px solid var(--linha); border-radius:var(--r); padding:22px; box-shadow:var(--sombra); margin-bottom:18px}
+.cartao > h2:first-child, .cartao > h3:first-child{margin-top:0}
+.grade{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px}
+.grade.duas{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.campo{display:flex; flex-direction:column; gap:5px}
+.campo label{font-size:.83rem; font-weight:600; color:var(--tinta-2)}
+.campo .dica{font-size:.76rem; color:var(--tinta-2); font-weight:400}
+input,select,textarea{
+  font:inherit; color:var(--tinta); background:var(--papel);
+  border:1px solid var(--linha); border-radius:8px; padding:9px 11px; width:100%;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--agua); outline:none; box-shadow:0 0 0 3px color-mix(in srgb,var(--agua) 18%,transparent)}
+textarea{min-height:84px; resize:vertical}
+.erro{color:var(--vermelho); font-size:.8rem; min-height:1em}
+.caixinha{display:flex; gap:10px; align-items:flex-start; font-size:.92rem}
+.caixinha input{width:18px;height:18px;margin-top:3px;flex:0 0 auto}
+fieldset{border:1px solid var(--linha); border-radius:var(--r); padding:16px; margin:0 0 16px}
+legend{font-family:var(--titulo); font-weight:600; padding:0 8px; font-size:.95rem}
+
+/* ---------- abas ---------- */
+.abas{display:flex; gap:4px; border-bottom:1px solid var(--linha); margin-bottom:20px; overflow-x:auto}
+.abas button{
+  background:none; border:none; border-bottom:3px solid transparent; color:var(--tinta-2);
+  padding:10px 14px; cursor:pointer; font-weight:600; white-space:nowrap;
+}
+.abas button[aria-selected="true"]{color:var(--tinta); border-bottom-color:var(--agua)}
+.painel{display:none} .painel.ativo{display:block}
+
+/* ---------- escala de dor ---------- */
+.dor-lista{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 12px}
+.dor-item{background:none;border:none;padding:4px;cursor:pointer;border-radius:12px;line-height:0;position:relative}
+.dor-item svg{width:56px;height:56px;display:block;transition:transform .18s ease, filter .18s ease; filter:grayscale(.55) opacity(.6)}
+.dor-item:hover svg{filter:none; transform:translateY(-3px)}
+.dor-item span{display:block;text-align:center;font-size:.75rem;color:var(--tinta-2);margin-top:2px;font-weight:600}
+.dor-item[aria-pressed="true"] svg{filter:none; animation:reage .45s ease}
+.dor-item[aria-pressed="true"]{background:color-mix(in srgb,var(--agua) 12%,transparent)}
+.dor-item[aria-pressed="true"] span{color:var(--tinta)}
+@keyframes reage{0%{transform:scale(1)}35%{transform:scale(1.28) rotate(-7deg)}70%{transform:scale(1.1) rotate(5deg)}100%{transform:scale(1.14)}}
+.dor-item[aria-pressed="true"] svg{transform:scale(1.14)}
+.dor-legenda{font-weight:600}
+@media(max-width:560px){.dor-item svg{width:46px;height:46px}}
+
+/* ---------- tabelas ---------- */
+.rolagem{overflow-x:auto; border:1px solid var(--linha); border-radius:var(--r); background:var(--papel)}
+table{border-collapse:collapse; width:100%; min-width:640px}
+th,td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--linha); font-size:.92rem; vertical-align:top}
+th{font-size:.76rem; color:var(--tinta-2); font-weight:600; background:color-mix(in srgb,var(--fundo) 60%,var(--papel))}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.clicavel{cursor:pointer}
+tbody tr.clicavel:hover{background:color-mix(in srgb,var(--agua) 7%,transparent)}
+tbody tr.selecionada{background:color-mix(in srgb,var(--agua) 12%,transparent)}
+.ficha th{width:34%; background:none; font-size:.8rem}
+.bolinha{width:15px;height:15px;border-radius:50%;display:inline-block;border:2px solid rgba(0,0,0,.18)}
+.bolinha.verde{background:var(--verde)} .bolinha.amarelo{background:var(--amarelo)}
+.bolinha.vermelho{background:var(--vermelho)} .bolinha.nenhum{background:transparent;border-style:dashed;border-color:var(--tinta-2)}
+.selbolinha{display:flex;gap:10px;flex-wrap:wrap}
+.selbolinha button{
+  display:flex;align-items:center;gap:8px;background:var(--papel);border:1px solid var(--linha);
+  border-radius:999px;padding:7px 14px;cursor:pointer;color:var(--tinta);font-size:.88rem;font-weight:600
+}
+.selbolinha button[aria-pressed="true"]{border-color:var(--tinta); box-shadow:inset 0 0 0 1px var(--tinta)}
+.etiqueta{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:600;border:1px solid var(--linha);color:var(--tinta-2)}
+.vazio{padding:34px; text-align:center; color:var(--tinta-2)}
+
+/* ---------- avisos ---------- */
+.aviso{border-left:4px solid var(--agua); background:color-mix(in srgb,var(--agua) 8%,transparent); padding:12px 16px; border-radius:6px; font-size:.9rem; margin-bottom:16px}
+.aviso.alerta{border-color:var(--vermelho); background:color-mix(in srgb,var(--vermelho) 9%,transparent)}
+.recado{
+  position:fixed; left:50%; transform:translateX(-50%); bottom:24px; z-index:90;
+  background:var(--tinta); color:var(--fundo); padding:11px 20px; border-radius:999px;
+  font-size:.9rem; box-shadow:var(--sombra); opacity:0; pointer-events:none; transition:opacity .2s, bottom .2s;
+}
+.recado.aparece{opacity:1; bottom:34px}
+.linha-botoes{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
+.duas-colunas{display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:18px; align-items:start}
+@media(max-width:900px){.duas-colunas{grid-template-columns:1fr}}
+code{background:color-mix(in srgb,var(--tinta) 8%,transparent); padding:1px 5px; border-radius:4px; font-size:.88em}
+pre{background:var(--tinta); color:#E7EEEE; padding:16px; border-radius:var(--r); overflow-x:auto; font-size:.82rem; line-height:1.5}
+pre code{background:none; color:inherit; padding:0}
+ol.passos{padding-left:20px} ol.passos li{margin-bottom:10px; max-width:68ch}
+footer{padding:40px 0; color:var(--tinta-2); font-size:.85rem; text-align:center}
+</style>
+</head>
+<body>
+
+<header class="topo" id="topo" hidden>
+  <div class="faixa">
+    <button class="marca" id="voltarInicio" style="background:none;border:none;cursor:pointer;color:inherit">
+      <span class="pulso"></span> Núcleo de Triagem
+    </button>
+    <div class="direita">
+      <span class="quem" id="quemSou"></span>
+      <button class="btn neutro pequeno" id="btnTema">Tema</button>
+      <button class="btn neutro pequeno" id="btnSair">Sair</button>
+    </div>
+  </div>
+</header>
+
+<!-- ====================== TELA INICIAL ====================== -->
+<main>
+<section class="tela ativa" id="tela-inicio">
+  <div class="faixa capa">
+    <div class="colunas">
+      <div>
+        <h1>Quem chega primeiro não é quem é atendido primeiro. Quem corre mais risco é.</h1>
+        <p class="lede">Este é o sistema de acolhimento e classificação de risco da unidade. O paciente preenche a própria ficha, a enfermagem mede os sinais vitais e define a cor do atendimento.</p>
+        <div class="reguacor" aria-hidden="true">
+          <div class="v">Verde · pode aguardar</div>
+          <div class="a">Amarelo · prioridade</div>
+          <div class="r">Vermelho · risco de vida</div>
+        </div>
+        <p style="font-size:.88rem;color:var(--tinta-2)">Em emergência com risco imediato, procure a equipe no balcão ou ligue 192. Não espere pelo sistema.</p>
+      </div>
+      <div>
+        <div class="portas">
+          <button class="porta" data-ir="paciente">
+            <span class="num">1</span>
+            <span><b>Sou paciente</b><small>Cadastrar meus dados, informar sintomas e marcar minha dor na escala.</small></span>
+            <span class="seta">›</span>
+          </button>
+          <button class="porta" data-ir="enfermeiro">
+            <span class="num">2</span>
+            <span><b>Sou enfermeiro(a)</b><small>Ver a fila, abrir a ficha completa, registrar sinais vitais e classificar o risco.</small></span>
+            <span class="seta">›</span>
+          </button>
+          <button class="porta" data-ir="tecnico">
+            <span class="num">3</span>
+            <span><b>Sou técnico(a) em enfermagem</b><small>Registrar P.A., P.A.G. e demais medidas. Dados sensíveis aparecem ocultos.</small></span>
+            <span class="seta">›</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="faixa">Sistema de demonstração acadêmica · Dados tratados conforme a Lei 13.709/2018 (LGPD)</footer>
+</section>
+
+<!-- ====================== MANUAL (botão discreto) ====================== -->
+<section class="tela" id="tela-manual">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px">
+    <h1>Manual do sistema</h1>
+    <p class="lede">Escolha o seu perfil e veja exatamente o que fazer, na ordem.</p>
+    <div class="abas" role="tablist" data-grupo="manual">
+      <button role="tab" aria-selected="true" data-painel="m-paciente">Paciente</button>
+      <button role="tab" aria-selected="false" data-painel="m-enf">Enfermeiro(a)</button>
+      <button role="tab" aria-selected="false" data-painel="m-tec">Técnico(a)</button>
+      <button role="tab" aria-selected="false" data-painel="m-lgpd">LGPD</button>
+      <button role="tab" aria-selected="false" data-painel="m-tec2">Como o site foi feito</button>
+    </div>
+
+    <div class="painel ativo" id="m-paciente">
+      <div class="cartao">
+        <h2>Paciente</h2>
+        <ol class="passos">
+          <li>Na página inicial, toque em <b>Sou paciente</b>.</li>
+          <li>Primeira vez? Use a aba <b>Criar cadastro</b>. Preencha nome, nome social (se usar), CPF, RG, data de nascimento, endereço, doenças, alergias e os contatos de emergência. O CPF e uma senha serão seus dados de entrada.</li>
+          <li>Marque o consentimento da LGPD. Sem ele o cadastro não é salvo — é a base legal que autoriza a unidade a tratar seus dados.</li>
+          <li>Já tem cadastro? Aba <b>Entrar</b>: CPF + senha.</li>
+          <li>Dentro do painel, abra <b>Abrir atendimento</b>: descreva o que está sentindo, há quanto tempo, quem veio com você e <b>escolha a carinha</b> que representa sua dor, de 1 a 10.</li>
+          <li>Envie. Sua ficha entra na fila da enfermagem na hora e você recebe uma senha de chamada.</li>
+          <li>Em <b>Meu histórico</b> você vê todas as suas idas anteriores, a cor que recebeu e o que foi registrado.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="painel" id="m-enf">
+      <div class="cartao">
+        <h2>Enfermeiro(a)</h2>
+        <ol class="passos">
+          <li>Página inicial → <b>Sou enfermeiro(a)</b>. Entre com nome, CPF, RG e número do COREN. Na primeira vez o sistema cria o seu acesso com esses dados e uma senha.</li>
+          <li>Você cai na <b>fila de triagem</b>, ordenada por prioridade: primeiro quem ainda não foi classificado, depois vermelho, amarelo e verde.</li>
+          <li>Clique na linha do paciente. À direita abre a ficha completa: identificação, doenças, alergias, medicação de uso, acompanhante, motivo da vinda e a dor marcada.</li>
+          <li>Preencha os sinais vitais: <b>P.A.</b>, <b>P.A.G.</b>, frequência cardíaca, frequência respiratória, temperatura, saturação e glicemia.</li>
+          <li>Escolha a <b>bolinha de risco</b>: verde (menos arriscado), amarelo (importante) ou vermelho (risco de vida). A cor aparece na tabela para toda a equipe imediatamente.</li>
+          <li>Escreva a evolução em <b>Anotações da enfermagem</b> e salve. Ao fim, use <b>Encaminhar / finalizar</b> — a ficha sai da fila e vira histórico do paciente.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="painel" id="m-tec">
+      <div class="cartao">
+        <h2>Técnico(a) em enfermagem</h2>
+        <ol class="passos">
+          <li>Página inicial → <b>Sou técnico(a)</b>. Entre com nome, CPF, RG e número do COREN (registro de técnico).</li>
+          <li>A fila é a mesma que o enfermeiro vê, com uma diferença: <b>CPF e RG dos pacientes aparecem mascarados</b> (•••.456.•••-••). É o princípio da necessidade da LGPD — você vê só o que precisa para o cuidado.</li>
+          <li>Você registra sinais vitais e medidas normalmente, e pode <b>sugerir</b> a cor do risco.</li>
+          <li>Toda cor marcada por técnico fica com a etiqueta <b>“a confirmar”</b> até um enfermeiro validar. A classificação de risco é privativa do enfermeiro (Resolução COFEN 423/2012).</li>
+          <li>Finalizar atendimento também é ação do enfermeiro.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="painel" id="m-lgpd">
+      <div class="cartao">
+        <h2>O que o sistema faz para cumprir a LGPD</h2>
+        <p>Dado de saúde é <b>dado pessoal sensível</b> (art. 5º, II da Lei 13.709/2018). Ele exige cuidado maior do que um dado comum. O que está implementado aqui:</p>
+        <ul>
+          <li><b>Consentimento registrado</b> — data, hora e versão do termo ficam gravadas junto do cadastro.</li>
+          <li><b>Finalidade declarada</b> — os dados são coletados para triagem e atendimento, e nada mais.</li>
+          <li><b>Minimização e necessidade</b> — cada perfil vê o mínimo necessário: o técnico recebe CPF e RG mascarados.</li>
+          <li><b>Controle de acesso</b> — só entra quem se identifica; profissional entra com COREN.</li>
+          <li><b>Registro de operações (trilha de auditoria)</b> — quem abriu qual ficha, quem alterou o quê e quando. Fica em <b>Privacidade</b> na área do paciente.</li>
+          <li><b>Direitos do titular</b> — o paciente pode ver, exportar em arquivo e excluir seus dados pelo próprio painel (arts. 18 e 19).</li>
+        </ul>
+        <div class="aviso alerta"><b>O que falta para uso real em hospital:</b> HTTPS obrigatório, senhas com hash forte (bcrypt/argon2) no servidor, criptografia do banco em repouso, backup, política de retenção do prontuário (o CFM exige guarda mínima de 20 anos), nomeação de encarregado de dados (DPO) e relatório de impacto. Este projeto é uma demonstração acadêmica — não coloque dados reais de pacientes nele.</div>
+      </div>
+    </div>
+
+    <div class="painel" id="m-tec2">
+      <div class="cartao">
+        <h2>Como o site foi feito</h2>
+        <p><b>HTML</b> é o esqueleto (os campos, as tabelas, os botões). <b>CSS</b> é a aparência (cores, espaçamentos, a régua verde-amarelo-vermelho). <b>JavaScript</b> é o comportamento (validar CPF, animar as carinhas, ordenar a fila). O <b>banco de dados</b> é a memória: onde pacientes, atendimentos e o log de auditoria ficam guardados.</p>
+        <h3>O banco desta versão</h3>
+        <p id="infoBanco">Verificando...</p>
+        <h3>O mesmo banco, em SQL, para um servidor de verdade</h3>
+<pre><code>CREATE TABLE paciente (
+  id            SERIAL PRIMARY KEY,
+  nome          VARCHAR(120) NOT NULL,
+  nome_social   VARCHAR(120),
+  cpf           CHAR(11) UNIQUE NOT NULL,
+  rg            VARCHAR(20),
+  nascimento    DATE NOT NULL,
+  cartao_sus    VARCHAR(20),
+  govbr         VARCHAR(120),
+  telefone      VARCHAR(20),
+  endereco      JSONB,
+  senha_hash    VARCHAR(255) NOT NULL,
+  consent_em    TIMESTAMP,
+  consent_versao VARCHAR(10),
+  criado_em     TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE condicao_saude (      -- alergias, diabetes, cardiopatia...
+  id          SERIAL PRIMARY KEY,
+  paciente_id INT REFERENCES paciente(id) ON DELETE CASCADE,
+  tipo        VARCHAR(30),         -- 'alergia' | 'doenca' | 'medicamento'
+  descricao   TEXT
+);
+
+CREATE TABLE profissional (
+  id        SERIAL PRIMARY KEY,
+  nome      VARCHAR(120) NOT NULL,
+  cpf       CHAR(11) UNIQUE NOT NULL,
+  rg        VARCHAR(20),
+  coren     VARCHAR(20) UNIQUE NOT NULL,
+  papel     VARCHAR(12) CHECK (papel IN ('enfermeiro','tecnico')),
+  senha_hash VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE atendimento (
+  id             SERIAL PRIMARY KEY,
+  paciente_id    INT REFERENCES paciente(id),
+  senha_chamada  VARCHAR(10),
+  aberto_em      TIMESTAMP DEFAULT now(),
+  motivo         TEXT,
+  sintomas       TEXT,
+  dor            SMALLINT CHECK (dor BETWEEN 0 AND 10),
+  risco          VARCHAR(10) CHECK (risco IN ('verde','amarelo','vermelho')),
+  risco_por      INT REFERENCES profissional(id),
+  risco_confirmado BOOLEAN DEFAULT FALSE,
+  status         VARCHAR(15) DEFAULT 'aguardando',
+  acompanhante   JSONB,
+  anotacoes      TEXT
+);
+
+CREATE TABLE sinais_vitais (
+  id             SERIAL PRIMARY KEY,
+  atendimento_id INT REFERENCES atendimento(id) ON DELETE CASCADE,
+  medido_em      TIMESTAMP DEFAULT now(),
+  medido_por     INT REFERENCES profissional(id),
+  pa             VARCHAR(10),      -- 120/80
+  pag            VARCHAR(10),
+  fc SMALLINT, fr SMALLINT, temperatura NUMERIC(4,1),
+  saturacao SMALLINT, glicemia SMALLINT
+);
+
+CREATE TABLE auditoria (           -- exigência prática da LGPD
+  id         SERIAL PRIMARY KEY,
+  quando     TIMESTAMP DEFAULT now(),
+  quem       VARCHAR(120),
+  papel      VARCHAR(20),
+  acao       VARCHAR(60),
+  alvo       VARCHAR(60)
+);</code></pre>
+        <p style="font-size:.9rem;color:var(--tinta-2)">Para rodar isso de verdade: Node.js + Express no servidor, PostgreSQL ou MySQL como banco, bcrypt para senhas e JWT para a sessão. O HTML/CSS/JS desta página continua igual; só as funções que hoje leem e gravam dados passariam a chamar o servidor com <code>fetch()</code>.</p>
+      </div>
+    </div>
+
+    <div class="linha-botoes">
+      <button class="btn neutro" data-ir="inicio">Voltar ao início</button>
+      <button class="btn neutro" id="btnDemo">Carregar pacientes de exemplo</button>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== PACIENTE: ENTRADA ====================== -->
+<section class="tela" id="tela-paciente-entrada">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px;max-width:820px">
+    <h1>Área do paciente</h1>
+    <div class="abas" role="tablist" data-grupo="pac">
+      <button role="tab" aria-selected="true" data-painel="p-entrar">Entrar</button>
+      <button role="tab" aria-selected="false" data-painel="p-criar">Criar cadastro</button>
+    </div>
+
+    <div class="painel ativo" id="p-entrar">
+      <div class="cartao">
+        <div class="grade">
+          <div class="campo"><label for="le-cpf">CPF</label><input id="le-cpf" inputmode="numeric" placeholder="000.000.000-00" autocomplete="username"></div>
+          <div class="campo"><label for="le-senha">Senha</label><input id="le-senha" type="password" autocomplete="current-password"></div>
+        </div>
+        <div class="erro" id="le-erro"></div>
+        <button class="btn" id="btnEntrarPaciente">Entrar</button>
+      </div>
+    </div>
+
+    <div class="painel" id="p-criar">
+      <form id="formCadastro" novalidate>
+        <fieldset>
+          <legend>Identificação</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-nome">Nome completo (registro civil)</label><input id="c-nome" required autocomplete="name"></div>
+            <div class="campo"><label for="c-social">Nome social <span class="dica">(como quer ser chamado)</span></label><input id="c-social"></div>
+            <div class="campo"><label for="c-nasc">Data de nascimento</label><input id="c-nasc" type="date" required></div>
+            <div class="campo"><label for="c-cpf">CPF</label><input id="c-cpf" inputmode="numeric" placeholder="000.000.000-00" required></div>
+            <div class="campo"><label for="c-rg">RG</label><input id="c-rg" required></div>
+            <div class="campo"><label for="c-sus">Cartão SUS</label><input id="c-sus" inputmode="numeric"></div>
+            <div class="campo"><label for="c-govbr">Conta gov.br <span class="dica">(e-mail ou CPF da conta)</span></label><input id="c-govbr"></div>
+            <div class="campo"><label for="c-tel">Telefone</label><input id="c-tel" inputmode="tel" placeholder="(00) 00000-0000" required></div>
+            <div class="campo"><label for="c-sangue">Tipo sanguíneo</label>
+              <select id="c-sangue"><option value="">Não sei</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Endereço</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-cep">CEP</label><input id="c-cep" inputmode="numeric" placeholder="00000-000"></div>
+            <div class="campo"><label for="c-rua">Rua</label><input id="c-rua"></div>
+            <div class="campo"><label for="c-num">Número</label><input id="c-num"></div>
+            <div class="campo"><label for="c-bairro">Bairro</label><input id="c-bairro"></div>
+            <div class="campo"><label for="c-cidade">Cidade</label><input id="c-cidade"></div>
+            <div class="campo"><label for="c-uf">UF</label><input id="c-uf" maxlength="2" style="text-transform:uppercase"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Saúde</legend>
+          <div class="grade duas">
+            <div class="campo"><label for="c-alergia">Alergia a medicamentos <span class="dica">Escreva “nenhuma” se não tiver</span></label><textarea id="c-alergia" required placeholder="Ex.: dipirona, penicilina"></textarea></div>
+            <div class="campo"><label for="c-doencas">Doenças que já tem</label>
+              <div style="display:flex;flex-wrap:wrap;gap:12px 18px" id="c-doencas">
+                <label class="caixinha"><input type="checkbox" value="Diabetes"> Diabetes</label>
+                <label class="caixinha"><input type="checkbox" value="Hipertensão"> Hipertensão</label>
+                <label class="caixinha"><input type="checkbox" value="Problema cardíaco"> Problema cardíaco</label>
+                <label class="caixinha"><input type="checkbox" value="Asma"> Asma</label>
+                <label class="caixinha"><input type="checkbox" value="Epilepsia"> Epilepsia</label>
+                <label class="caixinha"><input type="checkbox" value="Doença renal"> Doença renal</label>
+                <label class="caixinha"><input type="checkbox" value="Gestante"> Gestante</label>
+              </div>
+            </div>
+            <div class="campo"><label for="c-outras">Outras doenças ou cirurgias anteriores</label><textarea id="c-outras"></textarea></div>
+            <div class="campo"><label for="c-medic">Medicamentos de uso contínuo</label><textarea id="c-medic" placeholder="Ex.: losartana 50mg, 1x ao dia"></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contato de emergência</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-em-nome">Nome</label><input id="c-em-nome" required></div>
+            <div class="campo"><label for="c-em-par">Parentesco</label><input id="c-em-par" placeholder="Mãe, irmão, vizinha..." required></div>
+            <div class="campo"><label for="c-em-tel">Telefone</label><input id="c-em-tel" inputmode="tel" required></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Acesso e consentimento</legend>
+          <div class="grade">
+            <div class="campo"><label for="c-senha">Crie uma senha <span class="dica">mínimo 6 caracteres</span></label><input id="c-senha" type="password" required autocomplete="new-password"></div>
+            <div class="campo"><label for="c-senha2">Repita a senha</label><input id="c-senha2" type="password" required autocomplete="new-password"></div>
+          </div>
+          <label class="caixinha" style="margin-top:12px">
+            <input type="checkbox" id="c-consent">
+            <span>Autorizo a unidade de saúde a tratar meus dados pessoais e de saúde para fins de triagem, atendimento e histórico clínico, conforme a Lei 13.709/2018 (LGPD). Posso consultar, exportar ou pedir a exclusão dos meus dados a qualquer momento pelo painel. <b>Termo v1.0</b></span>
+          </label>
+          <div class="erro" id="c-erro"></div>
+          <button class="btn" type="submit" style="margin-top:6px">Criar cadastro</button>
+        </fieldset>
+      </form>
+    </div>
+    <button class="btn neutro" data-ir="inicio">Voltar ao início</button>
+  </div>
+</section>
+
+<!-- ====================== PACIENTE: PAINEL ====================== -->
+<section class="tela" id="tela-paciente-painel">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px">
+    <h1 id="pac-saudacao">Olá</h1>
+    <div class="abas" role="tablist" data-grupo="pacp">
+      <button role="tab" aria-selected="true" data-painel="pp-atend">Abrir atendimento</button>
+      <button role="tab" aria-selected="false" data-painel="pp-dados">Meus dados</button>
+      <button role="tab" aria-selected="false" data-painel="pp-hist">Meu histórico</button>
+      <button role="tab" aria-selected="false" data-painel="pp-priv">Privacidade</button>
+    </div>
+
+    <div class="painel ativo" id="pp-atend">
+      <div id="atendAberto"></div>
+      <form id="formAtend" class="cartao">
+        <h2>Por que você veio hoje?</h2>
+        <div class="grade duas">
+          <div class="campo"><label for="a-motivo">Motivo principal</label><input id="a-motivo" required placeholder="Ex.: dor no peito ao subir escada"></div>
+          <div class="campo"><label for="a-inicio">Começou quando?</label><input id="a-inicio" placeholder="Ex.: ontem à noite"></div>
+          <div class="campo" style="grid-column:1/-1"><label for="a-sintomas">Descreva os sintomas</label><textarea id="a-sintomas" required placeholder="O que sente, onde dói, se piora com alguma coisa, se teve febre, vômito..."></textarea></div>
+        </div>
+
+        <h3 style="margin-top:20px">Qual o tamanho da sua dor agora?</h3>
+        <p style="font-size:.9rem;color:var(--tinta-2);margin-bottom:4px">Toque na carinha que mais parece com você. 1 é quase nada, 10 é a pior dor que já sentiu.</p>
+        <div class="dor-lista" id="escalaDor" role="group" aria-label="Escala de dor de 1 a 10"></div>
+        <p class="dor-legenda" id="dorLegenda">Nenhuma carinha selecionada</p>
+
+        <fieldset style="margin-top:18px">
+          <legend>Acompanhante (se veio com alguém)</legend>
+          <div class="grade">
+            <div class="campo"><label for="ac-nome">Nome</label><input id="ac-nome"></div>
+            <div class="campo"><label for="ac-par">Grau de parentesco</label><input id="ac-par" placeholder="Filha, esposo, amigo..."></div>
+            <div class="campo"><label for="ac-rg">RG</label><input id="ac-rg"></div>
+            <div class="campo"><label for="ac-cpf">CPF</label><input id="ac-cpf" inputmode="numeric"></div>
+            <div class="campo"><label for="ac-tel">Telefone</label><input id="ac-tel" inputmode="tel"></div>
+            <div class="campo"><label for="ac-end">Onde reside</label><input id="ac-end"></div>
+          </div>
+        </fieldset>
+        <div class="erro" id="a-erro"></div>
+        <button class="btn" type="submit">Enviar para a triagem</button>
+      </form>
+    </div>
+
+    <div class="painel" id="pp-dados"><div class="cartao"><h2>Minha ficha</h2><div class="rolagem"><table class="ficha" id="tabelaMeusDados"></table></div></div></div>
+
+    <div class="painel" id="pp-hist">
+      <div class="cartao"><h2>Minhas idas ao hospital</h2><div id="histPaciente"></div></div>
+    </div>
+
+    <div class="painel" id="pp-priv">
+      <div class="cartao">
+        <h2>Seus direitos sobre seus dados</h2>
+        <p id="consentTexto" style="font-size:.9rem;color:var(--tinta-2)"></p>
+        <div class="linha-botoes">
+          <button class="btn neutro" id="btnExportar">Baixar meus dados</button>
+          <button class="btn perigo" id="btnExcluir">Excluir minha conta e meus dados</button>
+        </div>
+      </div>
+      <div class="cartao">
+        <h3>Quem acessou minha ficha</h3>
+        <div class="rolagem"><table id="tabelaAuditoria"><thead><tr><th>Quando</th><th>Quem</th><th>Perfil</th><th>O que fez</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tela" id="tela-prof-entrada">
+  <div class="faixa" style="padding-top:28px;padding-bottom:50px;max-width:760px">
+    <h1 id="prof-titulo">Área do enfermeiro</h1>
+    <p class="lede" id="prof-sub"></p>
+    <div class="cartao">
+      <div class="grade">
+        <div class="campo"><label for="f-nome">Nome completo</label><input id="f-nome" autocomplete="name"></div>
+        <div class="campo"><label for="f-cpf">CPF</label><input id="f-cpf" inputmode="numeric" placeholder="000.000.000-00"></div>
+        <div class="campo"><label for="f-rg">RG</label><input id="f-rg"></div>
+        <div class="campo"><label for="f-coren">Número do COREN</label><input id="f-coren" placeholder="Ex.: COREN-SP 123.456"></div>
+        <div class="campo"><label for="f-senha">Senha <span class="dica">criada no primeiro acesso</span></label><input id="f-senha" type="password" autocomplete="current-password"></div>
+      </div>
+      <div class="erro" id="f-erro"></div>
+      <button class="btn" id="btnEntrarProf">Entrar no plantão</button>
+    </div>
+    <button class="btn neutro" data-ir="inicio">Voltar ao início</button>
+  </div>
+</section>
+
+<section class="tela" id="tela-prof-painel">
+  <div class="faixa" style="padding-top:24px;padding-bottom:50px">
+    <h1 style="margin-bottom:4px">Fila de triagem</h1>
+    <p class="lede" id="resumoFila"></p>
+    <div class="aviso" id="avisoPerfil"></div>
+    <div class="duas-colunas">
+      <div>
+        <div class="rolagem" style="margin-bottom:12px">
+          <table id="tabelaFila" style="min-width:420px">
+            <thead><tr><th>Risco</th><th>Paciente</th><th>Dor</th><th>Espera</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <label class="caixinha"><input type="checkbox" id="verFinalizados"> Mostrar também os atendimentos já finalizados</label>
+      </div>
+      <div id="fichaPaciente"><div class="cartao vazio">Selecione um paciente na fila para abrir a ficha.</div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<button class="discreto" id="btnManual" title="Manual do sistema"><span class="interro">?</span> Como usar o site</button>
+<div class="recado" id="recado" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   1) BANCO DE DADOS
+   Usa o banco em nuvem do artefato quando disponível; se não houver,
+   guarda no próprio navegador (localStorage). O resto do código não
+   precisa saber qual dos dois está em uso.
+   ========================================================================= */
+const Banco = {
+  nuvem:null, pronto:false,
+  cache:{pacientes:{}, atendimentos:{}, profissionais:{}, sistema:{}},
+  ouvintes:[],
+  async iniciar(){
+    try{ if(window.claude && claude.use) this.nuvem = await claude.use('db'); }catch(e){ this.nuvem=null; }
+    if(this.nuvem){
+      for(const col of ['pacientes','atendimentos','profissionais','sistema']){
+        try{
+          this.nuvem.collection(col).onSnapshot(snap=>{
+            const novo={};
+            snap.docs.forEach(d=>{ novo[d.id]=Object.assign({id:d.id}, d.data()); });
+            this.cache[col]=novo; this.pronto=true; this.avisar();
+          }, ()=>{});
+        }catch(e){}
+      }
+      document.getElementById('infoBanco').textContent =
+        'Esta demonstração está gravando no banco de documentos do artefato (na nuvem). Ele é compartilhado: o que o paciente envia aparece na hora para a enfermagem, em outro aparelho.';
+    }else{
+      for(const col of ['pacientes','atendimentos','profissionais','sistema']){
+        try{ this.cache[col]=JSON.parse(localStorage.getItem('triagem:'+col)||'{}'); }catch(e){ this.cache[col]={}; }
+      }
+      const el=document.getElementById('infoBanco');
+      if(el) el.textContent='Esta cópia está gravando no armazenamento do próprio navegador (localStorage). Os dados ficam só neste aparelho.';
+    }
+    this.pronto=true; this.avisar();
+  },
+  avisar(){ this.ouvintes.forEach(f=>{ try{f();}catch(e){} }); },
+  aoMudar(f){ this.ouvintes.push(f); },
+  lista(col){ return Object.values(this.cache[col]||{}); },
+  pega(col,id){ return (this.cache[col]||{})[id]||null; },
+  async salva(col,id,obj){
+    const corpo=Object.assign({},obj); delete corpo.id;
+    this.cache[col][id]=Object.assign({id},corpo);
+    if(this.nuvem){ try{ await this.nuvem.doc(col+'/'+id).set(corpo); }catch(e){ Aviso.mostrar('Não consegui gravar agora. Tente de novo.'); } }
+    else localStorage.setItem('triagem:'+col, JSON.stringify(this.cache[col]));
+    this.avisar();
+  },
+  async apaga(col,id){
+    delete this.cache[col][id];
+    if(this.nuvem){ try{ await this.nuvem.doc(col+'/'+id).delete(); }catch(e){} }
+    else localStorage.setItem('triagem:'+col, JSON.stringify(this.cache[col]));
+    this.avisar();
+  }
+};
+
+const $$ = s => Array.from(document.querySelectorAll(s));
+const Aviso = { t:null, mostrar(txt){ const r=$('#recado'); r.textContent=txt; r.classList.add('aparece'); clearTimeout(this.t); this.t=setTimeout(()=>r.classList.remove('aparece'),3200); } };
+const soNumeros = s => (s||'').replace(/\D/g,'');
+const id = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* senha: embaralhamento simples, só para a demonstração.
+   Em produção o servidor usa bcrypt ou argon2 — nunca isto. */
+function embaralhaSenha(txt){ let h=5381; for(let i=0;i<txt.length;i++) h=((h<<5)+h+txt.charCodeAt(i))|0; return 'd'+Math.abs(h).toString(36); }
+
+function validaCPF(v){
+  const c=soNumeros(v); if(c.length!==11||/^(\d)\1{10}$/.test(c)) return false;
+  let s=0; for(let i=0;i<9;i++) s+=+c[i]*(10-i);
+  let d1=(s*10)%11; if(d1===10) d1=0; if(d1!==+c[9]) return false;
+  s=0; for(let i=0;i<10;i++) s+=+c[i]*(11-i);
+  let d2=(s*10)%11; if(d2===10) d2=0; return d2===+c[10];
+}
+function formataCPF(v){ const c=soNumeros(v).slice(0,11); return c.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2'); }
+function mascaraCPF(v){ const c=soNumeros(v); return c.length===11 ? '•••.'+c.slice(3,6)+'.•••-••' : '•••'; }
+function mascaraRG(v){ const c=(v||'').trim(); return c ? '••••'+c.slice(-2) : '—'; }
+function idade(nasc){ if(!nasc) return '—'; const d=new Date(nasc), h=new Date(); let a=h.getFullYear()-d.getFullYear(); const m=h.getMonth()-d.getMonth(); if(m<0||(m===0&&h.getDate()<d.getDate())) a--; return a+' anos'; }
+function hora(ts){ return new Date(ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+function espera(ts){ const m=Math.floor((Date.now()-ts)/60000); if(m<60) return m+' min'; const h=Math.floor(m/60); return h+'h'+String(m%60).padStart(2,'0'); }
+
+let sessao=null;
+function vaPara(nome){
+  $$('.tela').forEach(t=>t.classList.remove('ativa'));
+  const alvo=$('#tela-'+nome); if(alvo) alvo.classList.add('ativa');
+  $('#topo').hidden = (nome==='inicio');
+  window.scrollTo({top:0,behavior:'instant'});
+  if(nome==='prof-painel') desenhaFila();
+  if(nome==='paciente-painel') desenhaPaciente();
+}
+$$('[data-ir]').forEach(b=>b.addEventListener('click',()=>{
+  const d=b.dataset.ir;
+  if(d==='paciente') vaPara('paciente-entrada');
+  else if(d==='enfermeiro'||d==='tecnico'){ prepararLoginProf(d); }
+  else vaPara(d);
+}));
+$('#btnManual').addEventListener('click',()=>vaPara('manual'));
+$('#voltarInicio').addEventListener('click',()=>vaPara(sessao? (sessao.papel==='paciente'?'paciente-painel':'prof-painel') : 'inicio'));
+$('#btnSair').addEventListener('click',()=>{ sessao=null; sessionStorage.removeItem('triagem:sessao'); $('#quemSou').textContent=''; vaPara('inicio'); });
+$('#btnTema').addEventListener('click',()=>{
+  const atual=document.documentElement.getAttribute('data-theme');
+  const escuro=window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', atual? (atual==='dark'?'light':'dark') : (escuro?'light':'dark'));
+});
+$$('.abas').forEach(grupo=>{
+  grupo.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-painel]'); if(!b) return;
+    grupo.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected', x===b));
+    const irmaos=b.dataset.painel;
+    grupo.parentElement.querySelectorAll(':scope > .painel').forEach(p=>p.classList.toggle('ativo', p.id===irmaos));
+  });
+});
+const CARAS = [
+  {cor:'amarelo', boca:'sorrisao', texto:'Quase não dói'},
+  {cor:'amarelo', boca:'sorriso'},
+  {cor:'amarelo', boca:'sorrisinho'},
+  {cor:'amarelo', boca:'reta'},
+  {cor:'amarelo', boca:'reta', texto:'Dá para aguentar'},
+  {cor:'laranja', boca:'reta'},
+  {cor:'laranja', boca:'reta'},
+  {cor:'laranja', boca:'triste', texto:'Está atrapalhando'},
+  {cor:'vermelho', boca:'muitotriste', olhos:'x'},
+  {cor:'vermelho', boca:'careta', olhos:'x', texto:'A pior dor possível'}
+];
+const PALETA = {amarelo:['#FFE45C','#F2C200'], laranja:['#FCB13E','#EE8B00'], vermelho:['#F4574C','#D2251B']};
+function desenhaCara(i){
+  const c=CARAS[i], [claro,escuro]=PALETA[c.cor], g='g'+i;
+  let olhos = c.olhos==='x'
+    ? `<g stroke="#101010" stroke-width="7" stroke-linecap="round">
+         <path d="M29,34 L43,46 M43,34 L29,46"/><path d="M57,34 L71,46 M71,34 L57,46"/></g>`
+    : `<circle cx="36" cy="41" r="6.5" fill="#101010"/><circle cx="64" cy="41" r="6.5" fill="#101010"/>`;
+  const bocas = {
+    sorrisao:'<path d="M24,54 Q50,92 76,54 Z" fill="#101010"/>',
+    sorriso:'<path d="M25,56 Q50,84 75,56" fill="none" stroke="#101010" stroke-width="8" stroke-linecap="round"/>',
+    sorrisinho:'<path d="M27,58 Q50,76 73,58" fill="none" stroke="#101010" stroke-width="8" stroke-linecap="round"/>',
+    reta:'<rect x="28" y="62" width="44" height="8" rx="4" fill="#101010"/>',
+    triste:'<path d="M28,70 Q50,56 72,70" fill="none" stroke="#101010" stroke-width="8" stroke-linecap="round"/>',
+    muitotriste:'<path d="M27,74 Q50,52 73,74" fill="none" stroke="#101010" stroke-width="8" stroke-linecap="round"/>',
+    careta:`<rect x="27" y="58" width="46" height="20" rx="8" fill="#101010"/>
+            <g stroke="#FFF" stroke-width="3"><path d="M27,68 H73"/><path d="M39,58 V78"/><path d="M50,58 V78"/><path d="M61,58 V78"/></g>`
+  };
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs><radialGradient id="${g}" cx="38%" cy="30%" r="78%">
+      <stop offset="0%" stop-color="${claro}"/><stop offset="100%" stop-color="${escuro}"/></radialGradient></defs>
+    <circle cx="50" cy="50" r="44" fill="url(#${g})" stroke="#101010" stroke-width="6"/>
+    ${olhos}${bocas[c.boca]}</svg>`;
+}
+let dorEscolhida=null;
+function montaEscala(){
+  const box=$('#escalaDor'); box.innerHTML='';
+  CARAS.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='dor-item'; b.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-label','Dor nível '+(i+1)+(c.texto?' — '+c.texto:''));
+    b.innerHTML=desenhaCara(i)+'<span>'+(i+1)+'</span>';
+    b.addEventListener('click',()=>{
+      dorEscolhida=i+1;
+      $$('#escalaDor .dor-item').forEach((x,j)=>x.setAttribute('aria-pressed', j===i));
+      $('#dorLegenda').textContent = 'Dor '+dorEscolhida+' de 10 — '+descreveDor(dorEscolhida);
+    });
+    box.appendChild(b);
+  });
+}
+function descreveDor(n){
+  if(n<=2) return 'leve';
+  if(n<=4) return 'incômoda';
+  if(n<=6) return 'moderada';
+  if(n<=8) return 'forte';
+  return 'insuportável';
+}
+
+async function registrar(acao, alvo){
+  const doc = Banco.pega('sistema','auditoria') || {eventos:[]};
+  const eventos = (doc.eventos||[]).slice(-199);
+  eventos.push({quando:Date.now(), quem: sessao?sessao.nome:'—', papel: sessao?sessao.papel:'—', acao, alvo:alvo||''});
+  await Banco.salva('sistema','auditoria',{eventos});
+}
+['c-cpf','le-cpf','f-cpf','ac-cpf'].forEach(k=>{
+  const el=$('#'+k); if(el) el.addEventListener('input',()=>{ el.value=formataCPF(el.value); });
+});
+$('#formCadastro').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const err=$('#c-erro'); err.textContent='';
+  const obrig=[['c-nome','o nome completo'],['c-nasc','a data de nascimento'],['c-rg','o RG'],['c-tel','o telefone'],['c-alergia','o campo de alergias'],['c-em-nome','o contato de emergência'],['c-em-par','o parentesco do contato'],['c-em-tel','o telefone do contato']];
+  for(const [k,nome] of obrig){ if(!$('#'+k).value.trim()){ err.textContent='Falta preencher '+nome+'.'; $('#'+k).focus(); return; } }
+  if(!validaCPF($('#c-cpf').value)){ err.textContent='CPF inválido. Confira os números.'; $('#c-cpf').focus(); return; }
+  if($('#c-senha').value.length<6){ err.textContent='A senha precisa ter pelo menos 6 caracteres.'; return; }
+  if($('#c-senha').value!==$('#c-senha2').value){ err.textContent='As duas senhas estão diferentes.'; return; }
+  if(!$('#c-consent').checked){ err.textContent='Sem o consentimento da LGPD o cadastro não pode ser salvo.'; return; }
+  const cpf=soNumeros($('#c-cpf').value);
+  if(Banco.lista('pacientes').some(p=>p.cpf===cpf)){ err.textContent='Já existe um cadastro com este CPF. Use a aba Entrar.'; return; }
+  const p={
+    nome:$('#c-nome').value.trim(), nomeSocial:$('#c-social').value.trim(),
+    nascimento:$('#c-nasc').value, cpf, rg:$('#c-rg').value.trim(),
+    sus:$('#c-sus').value.trim(), govbr:$('#c-govbr').value.trim(),
+    telefone:$('#c-tel').value.trim(), sangue:$('#c-sangue').value,
+    endereco:{cep:$('#c-cep').value,rua:$('#c-rua').value,num:$('#c-num').value,bairro:$('#c-bairro').value,cidade:$('#c-cidade').value,uf:$('#c-uf').value.toUpperCase()},
+    alergias:$('#c-alergia').value.trim(),
+    doencas:$$('#c-doencas input:checked').map(i=>i.value),
+    outras:$('#c-outras').value.trim(), medicamentos:$('#c-medic').value.trim(),
+    emergencia:{nome:$('#c-em-nome').value,parentesco:$('#c-em-par').value,telefone:$('#c-em-tel').value},
+    senha:embaralhaSenha($('#c-senha').value),
+    consentimento:{aceito:true, quando:Date.now(), versao:'1.0'},
+    criadoEm:Date.now()
+  };
+  const novo=id();
+  await Banco.salva('pacientes',novo,p);
+  sessao={papel:'paciente', id:novo, nome:p.nomeSocial||p.nome};
+  await registrar('Criou o cadastro','paciente '+novo);
+  Aviso.mostrar('Cadastro criado. Agora conte o que está sentindo.');
+  entrouPaciente();
+});
+$('#btnEntrarPaciente').addEventListener('click', async ()=>{
+  const err=$('#le-erro'); err.textContent='';
+  const cpf=soNumeros($('#le-cpf').value);
+  const p=Banco.lista('pacientes').find(x=>x.cpf===cpf);
+  if(!p || p.senha!==embaralhaSenha($('#le-senha').value)){ err.textContent='CPF ou senha não conferem.'; return; }
+  sessao={papel:'paciente', id:p.id, nome:p.nomeSocial||p.nome};
+  await registrar('Entrou no sistema','paciente '+p.id);
+  entrouPaciente();
+});
+function entrouPaciente(){
+  const p=Banco.pega('pacientes',sessao.id);
+  $('#quemSou').textContent='Paciente · '+(p.nomeSocial||p.nome);
+  $('#pac-saudacao').textContent='Olá, '+(p.nomeSocial||p.nome).split(' ')[0];
+  vaPara('paciente-painel');
+}
+
+$('#formAtend').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const err=$('#a-erro'); err.textContent='';
+  if(!$('#a-motivo').value.trim()||!$('#a-sintomas').value.trim()){ err.textContent='Conte o motivo e descreva os sintomas.'; return; }
+  if(!dorEscolhida){ err.textContent='Escolha uma carinha na escala de dor.'; return; }
+  const senha='T'+String(Banco.lista('atendimentos').length+1).padStart(3,'0');
+  const at={
+    pacienteId:sessao.id, senhaChamada:senha, abertoEm:Date.now(),
+    motivo:$('#a-motivo').value.trim(), inicio:$('#a-inicio').value.trim(),
+    sintomas:$('#a-sintomas').value.trim(), dor:dorEscolhida,
+    risco:null, riscoConfirmado:false, status:'aguardando',
+    acompanhante:{nome:$('#ac-nome').value,parentesco:$('#ac-par').value,rg:$('#ac-rg').value,cpf:soNumeros($('#ac-cpf').value),telefone:$('#ac-tel').value,endereco:$('#ac-end').value},
+    sinais:{}, anotacoes:'', eventos:[{quando:Date.now(), texto:'Ficha aberta pelo paciente'}]
+  };
+  await Banco.salva('atendimentos',id(),at);
+  await registrar('Abriu atendimento', senha);
+  e.target.reset(); dorEscolhida=null;
+  $$('#escalaDor .dor-item').forEach(x=>x.setAttribute('aria-pressed','false'));
+  $('#dorLegenda').textContent='Nenhuma carinha selecionada';
+  Aviso.mostrar('Ficha enviada. Sua senha é '+senha+'.');
+  desenhaPaciente();
+});
+
+function desenhaPaciente(){
+  if(!sessao||sessao.papel!=='paciente') return;
+  const p=Banco.pega('pacientes',sessao.id); if(!p) return;
+  const meus=Banco.lista('atendimentos').filter(a=>a.pacienteId===p.id).sort((a,b)=>b.abertoEm-a.abertoEm);
+  const aberto=meus.find(a=>a.status!=='finalizado');
+
+  $('#atendAberto').innerHTML = aberto ? `
+    <div class="cartao" style="border-left:5px solid ${aberto.risco?'var(--'+aberto.risco+')':'var(--agua)'}">
+      <h2 style="margin-bottom:2px">Você está na fila — senha ${esc(aberto.senhaChamada)}</h2>
+      <p style="color:var(--tinta-2);margin-bottom:10px">Aberta às ${hora(aberto.abertoEm)} · esperando há ${espera(aberto.abertoEm)}</p>
+      <p>${aberto.risco
+        ? 'Classificação da enfermagem: <span class="bolinha '+aberto.risco+'"></span> <b>'+aberto.risco+'</b>'
+        : 'Aguardando a enfermagem chamar você para medir os sinais vitais.'}</p>
+      <p style="font-size:.88rem;color:var(--tinta-2)">Se piorar enquanto espera, avise a equipe no balcão.</p>
+    </div>` : '';
+  $('#formAtend').style.display = aberto ? 'none' : 'block';
+
+  const e1=p.endereco||{};
+  $('#tabelaMeusDados').innerHTML = `<tbody>
+    ${linha('Nome',p.nome)}${linha('Nome social',p.nomeSocial||'—')}
+    ${linha('Nascimento',(p.nascimento||'—')+' ('+idade(p.nascimento)+')')}
+    ${linha('CPF',formataCPF(p.cpf))}${linha('RG',p.rg)}
+    ${linha('Cartão SUS',p.sus||'—')}${linha('Conta gov.br',p.govbr||'—')}
+    ${linha('Telefone',p.telefone)}${linha('Tipo sanguíneo',p.sangue||'Não informado')}
+    ${linha('Endereço',[e1.rua,e1.num,e1.bairro,e1.cidade,e1.uf,e1.cep].filter(Boolean).join(', ')||'—')}
+    ${linha('Alergia a medicamentos',p.alergias)}
+    ${linha('Doenças',(p.doencas||[]).join(', ')||'Nenhuma marcada')}
+    ${linha('Outras doenças / cirurgias',p.outras||'—')}
+    ${linha('Medicamentos de uso contínuo',p.medicamentos||'—')}
+    ${linha('Contato de emergência',(p.emergencia?p.emergencia.nome+' ('+p.emergencia.parentesco+') · '+p.emergencia.telefone:'—'))}
+  </tbody>`;
+
+  $('#histPaciente').innerHTML = meus.length ? `<div class="rolagem"><table>
+    <thead><tr><th>Data</th><th>Senha</th><th>Motivo</th><th>Dor</th><th>Risco</th><th>Sinais vitais</th><th>Situação</th></tr></thead>
+    <tbody>${meus.map(a=>`<tr>
+      <td>${hora(a.abertoEm)}</td><td>${esc(a.senhaChamada)}</td><td>${esc(a.motivo)}</td>
+      <td>${a.dor}/10</td>
+      <td>${a.risco?'<span class="bolinha '+a.risco+'"></span> '+a.risco:'—'}</td>
+      <td>${resumoSinais(a.sinais)}</td>
+      <td>${esc(a.status)}</td></tr>`).join('')}</tbody></table></div>`
+    : '<div class="vazio">Você ainda não tem atendimentos registrados.</div>';
+
+  const c=p.consentimento||{};
+  $('#consentTexto').textContent = c.aceito
+    ? 'Você autorizou o tratamento dos seus dados em '+hora(c.quando)+', termo versão '+c.versao+'. A finalidade é triagem e atendimento. Você pode revogar excluindo sua conta abaixo.'
+    : 'Consentimento não registrado.';
+
+  const ev=((Banco.pega('sistema','auditoria')||{}).eventos||[]).slice().reverse().slice(0,40);
+  $('#tabelaAuditoria tbody').innerHTML = ev.length ? ev.map(x=>`<tr><td>${hora(x.quando)}</td><td>${esc(x.quem)}</td><td>${esc(x.papel)}</td><td>${esc(x.acao)}${x.alvo?' · '+esc(x.alvo):''}</td></tr>`).join('')
+    : '<tr><td colspan="4" class="vazio">Nenhum acesso registrado ainda.</td></tr>';
+}
+function linha(t,v){ return `<tr><th>${esc(t)}</th><td>${esc(v)}</td></tr>`; }
+function resumoSinais(s){
+  if(!s||!Object.keys(s).length) return '—';
+  const partes=[]; if(s.pa) partes.push('P.A. '+s.pa); if(s.pag) partes.push('P.A.G. '+s.pag);
+  if(s.fc) partes.push('FC '+s.fc); if(s.temp) partes.push('T '+s.temp+'°C'); if(s.spo2) partes.push('SpO₂ '+s.spo2+'%');
+  return partes.join(' · ')||'—';
+}
+
+$('#btnExportar').addEventListener('click', async ()=>{
+  const p=Banco.pega('pacientes',sessao.id);
+  const meus=Banco.lista('atendimentos').filter(a=>a.pacienteId===p.id);
+  const dados={paciente:p, atendimentos:meus, geradoEm:new Date().toISOString()};
+  const texto=JSON.stringify(dados,null,2);
+  let baixou=false;
+  try{
+    const d = window.claude && claude.use ? await claude.use('downloads') : null;
+    if(d){ await d.save({filename:'meus-dados-triagem.json', data:texto}); baixou=true; }
+  }catch(e){}
+  if(!baixou){
+    const janela=window.open('','_blank');
+    if(janela){ janela.document.write('<pre>'+esc(texto)+'</pre>'); baixou=true; }
+  }
+  await registrar('Exportou os próprios dados','');
+  Aviso.mostrar(baixou?'Seus dados foram gerados.':'Não consegui abrir o arquivo aqui.');
+});
+$('#btnExcluir').addEventListener('click', async ()=>{
+  if(!confirm('Isso apaga seu cadastro e todo o seu histórico, sem volta. Confirmar?')) return;
+  const meus=Banco.lista('atendimentos').filter(a=>a.pacienteId===sessao.id);
+  for(const a of meus) await Banco.apaga('atendimentos',a.id);
+  await Banco.apaga('pacientes',sessao.id);
+  await registrar('Excluiu a própria conta','');
+  sessao=null; Aviso.mostrar('Seus dados foram excluídos.'); vaPara('inicio');
+});
+
+let papelEscolhido='enfermeiro';
+function prepararLoginProf(papel){
+  papelEscolhido=papel;
+  $('#prof-titulo').textContent = papel==='enfermeiro' ? 'Área do enfermeiro(a)' : 'Área do técnico(a) em enfermagem';
+  $('#prof-sub').textContent = papel==='enfermeiro'
+    ? 'Acesso privativo do enfermeiro: ficha completa, sinais vitais, classificação de risco e finalização do atendimento.'
+    : 'Acesso do técnico: registro de sinais vitais e sugestão de cor. CPF e RG dos pacientes aparecem mascarados.';
+  $('#f-erro').textContent=''; vaPara('prof-entrada');
+}
+$('#btnEntrarProf').addEventListener('click', async ()=>{
+  const err=$('#f-erro'); err.textContent='';
+  const nome=$('#f-nome').value.trim(), cpf=soNumeros($('#f-cpf').value), rg=$('#f-rg').value.trim(),
+        coren=$('#f-coren').value.trim(), senha=$('#f-senha').value;
+  if(!nome||!cpf||!rg||!coren||!senha){ err.textContent='Preencha nome, CPF, RG, COREN e senha.'; return; }
+  if(!validaCPF(cpf)){ err.textContent='CPF inválido.'; return; }
+  if(senha.length<6){ err.textContent='A senha precisa ter pelo menos 6 caracteres.'; return; }
+  let prof=Banco.lista('profissionais').find(p=>p.cpf===cpf);
+  if(prof){
+    if(prof.senha!==embaralhaSenha(senha)){ err.textContent='Senha incorreta para este CPF.'; return; }
+    if(prof.papel!==papelEscolhido){ err.textContent='Este CPF está cadastrado como '+prof.papel+'. Entre pela porta correta.'; return; }
+  }else{
+    const novo=id();
+    prof={id:novo, nome, cpf, rg, coren, papel:papelEscolhido, senha:embaralhaSenha(senha), criadoEm:Date.now()};
+    await Banco.salva('profissionais',novo,prof);
+  }
+  sessao={papel:prof.papel, id:prof.id, nome:prof.nome, coren:prof.coren};
+  $('#quemSou').textContent=(prof.papel==='enfermeiro'?'Enf. ':'Téc. ')+prof.nome+' · '+prof.coren;
+  await registrar('Entrou no plantão','');
+  vaPara('prof-painel');
+});
+
+let selecionado=null;
+const ORDEM={null:0, vermelho:1, amarelo:2, verde:3};
+function desenhaFila(){
+  if(!sessao||sessao.papel==='paciente') return;
+  const ehEnf = sessao.papel==='enfermeiro';
+  $('#avisoPerfil').innerHTML = ehEnf
+    ? 'Você vê a ficha completa e é quem <b>confirma</b> a classificação de risco e finaliza o atendimento.'
+    : 'Perfil técnico: CPF e RG aparecem mascarados (princípio da necessidade, LGPD). A cor que você marcar fica como <b>a confirmar</b> até um enfermeiro validar.';
+  const verFin=$('#verFinalizados').checked;
+  const lista=Banco.lista('atendimentos')
+    .filter(a=>verFin?true:a.status!=='finalizado')
+    .sort((a,b)=>{
+      const ra=ORDEM[a.risco]??0, rb=ORDEM[b.risco]??0;
+      if(a.status!==b.status) return a.status==='finalizado'?1:-1;
+      if(ra!==rb) return ra-rb;
+      return a.abertoEm-b.abertoEm;
+    });
+  const semCor=lista.filter(a=>!a.risco&&a.status!=='finalizado').length;
+  $('#resumoFila').textContent = lista.length
+    ? lista.filter(a=>a.status!=='finalizado').length+' pessoas aguardando · '+semCor+' ainda sem classificação'
+    : 'Ninguém na fila agora.';
+  const tb=$('#tabelaFila tbody');
+  tb.innerHTML = lista.length ? lista.map(a=>{
+    const p=Banco.pega('pacientes',a.pacienteId)||{nome:'(cadastro removido)'};
+    return `<tr class="clicavel ${selecionado===a.id?'selecionada':''}" data-at="${a.id}">
+      <td><span class="bolinha ${a.risco||'nenhum'}"></span>${a.risco&&!a.riscoConfirmado?'<br><span class="etiqueta">a confirmar</span>':''}</td>
+      <td><b>${esc(p.nomeSocial||p.nome)}</b><br><span style="color:var(--tinta-2);font-size:.82rem">${esc(a.senhaChamada)} · ${idade(p.nascimento)}</span></td>
+      <td>${a.dor}/10</td>
+      <td>${a.status==='finalizado'?'<span class="etiqueta">finalizado</span>':espera(a.abertoEm)}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="4" class="vazio">Nenhuma ficha aberta.</td></tr>';
+  tb.querySelectorAll('tr[data-at]').forEach(tr=>tr.addEventListener('click',()=>abrirFicha(tr.dataset.at)));
+  if(selecionado && Banco.pega('atendimentos',selecionado)) abrirFicha(selecionado,true);
+}
+$('#verFinalizados').addEventListener('change',desenhaFila);
+
+async function abrirFicha(atId, semLog){
+  const a=Banco.pega('atendimentos',atId); if(!a) return;
+  const p=Banco.pega('pacientes',a.pacienteId)||{};
+  const ehEnf=sessao.papel==='enfermeiro';
+  if(selecionado!==atId && !semLog){ await registrar('Abriu a ficha do paciente', a.senhaChamada); }
+  selecionado=atId;
+  $$('#tabelaFila tbody tr').forEach(tr=>tr.classList.toggle('selecionada', tr.dataset.at===atId));
+  const s=a.sinais||{}, ac=a.acompanhante||{}, e1=p.endereco||{};
+  const podeFinalizar = ehEnf && a.status!=='finalizado';
+  $('#fichaPaciente').innerHTML=`
+    <div class="cartao">
+      <h2 style="margin-bottom:2px">${esc(p.nomeSocial||p.nome||'—')}</h2>
+      <p style="color:var(--tinta-2)">Senha ${esc(a.senhaChamada)} · ${idade(p.nascimento)} · aberta ${hora(a.abertoEm)} · dor <b>${a.dor}/10 (${descreveDor(a.dor)})</b></p>
+      ${p.alergias&&!/nenhum/i.test(p.alergias)?`<div class="aviso alerta"><b>Alergia:</b> ${esc(p.alergias)}</div>`:''}
+      <div class="rolagem"><table class="ficha"><tbody>
+        ${linha('Motivo da vinda',a.motivo)}
+        ${linha('Começou',a.inicio||'—')}
+        ${linha('Sintomas relatados',a.sintomas)}
+        ${linha('CPF', ehEnf?formataCPF(p.cpf):mascaraCPF(p.cpf))}
+        ${linha('RG', ehEnf?(p.rg||'—'):mascaraRG(p.rg))}
+        ${ehEnf?linha('Cartão SUS',p.sus||'—')+linha('Conta gov.br',p.govbr||'—'):''}
+        ${linha('Nascimento',p.nascimento||'—')}
+        ${linha('Tipo sanguíneo',p.sangue||'Não informado')}
+        ${linha('Doenças',(p.doencas||[]).join(', ')||'Nenhuma marcada')}
+        ${linha('Outras doenças / cirurgias',p.outras||'—')}
+        ${linha('Medicamentos de uso contínuo',p.medicamentos||'—')}
+        ${linha('Telefone',p.telefone||'—')}
+        ${ehEnf?linha('Endereço',[e1.rua,e1.num,e1.bairro,e1.cidade,e1.uf].filter(Boolean).join(', ')||'—'):''}
+        ${linha('Contato de emergência',p.emergencia?p.emergencia.nome+' ('+p.emergencia.parentesco+') · '+p.emergencia.telefone:'—')}
+      </tbody></table></div>
+
+      <h3 style="margin-top:18px">Acompanhante</h3>
+      <div class="rolagem"><table class="ficha"><tbody>
+        ${linha('Nome',ac.nome||'Veio sozinho(a)')}
+        ${linha('Grau de parentesco',ac.parentesco||'—')}
+        ${linha('RG', ehEnf?(ac.rg||'—'):mascaraRG(ac.rg))}
+        ${linha('CPF', ac.cpf?(ehEnf?formataCPF(ac.cpf):mascaraCPF(ac.cpf)):'—')}
+        ${linha('Telefone',ac.telefone||'—')}
+        ${linha('Onde reside',ac.endereco||'—')}
+      </tbody></table></div>
+    </div>
+
+    <div class="cartao">
+      <h3>Sinais vitais e medidas</h3>
+      <div class="grade">
+        <div class="campo"><label for="s-pa">P.A. <span class="dica">mmHg</span></label><input id="s-pa" placeholder="120/80" value="${esc(s.pa||'')}"></div>
+        <div class="campo"><label for="s-pag">P.A.G. <span class="dica">conforme protocolo da unidade</span></label><input id="s-pag" placeholder="—" value="${esc(s.pag||'')}"></div>
+        <div class="campo"><label for="s-fc">FC <span class="dica">bpm</span></label><input id="s-fc" inputmode="numeric" value="${esc(s.fc||'')}"></div>
+        <div class="campo"><label for="s-fr">FR <span class="dica">irpm</span></label><input id="s-fr" inputmode="numeric" value="${esc(s.fr||'')}"></div>
+        <div class="campo"><label for="s-temp">Temperatura <span class="dica">°C</span></label><input id="s-temp" inputmode="decimal" value="${esc(s.temp||'')}"></div>
+        <div class="campo"><label for="s-spo2">Saturação <span class="dica">%</span></label><input id="s-spo2" inputmode="numeric" value="${esc(s.spo2||'')}"></div>
+        <div class="campo"><label for="s-glic">Glicemia <span class="dica">mg/dL</span></label><input id="s-glic" inputmode="numeric" value="${esc(s.glicemia||'')}"></div>
+        <div class="campo"><label for="s-peso">Peso <span class="dica">kg</span></label><input id="s-peso" inputmode="decimal" value="${esc(s.peso||'')}"></div>
+      </div>
+
+      <h3 style="margin-top:18px">Classificação de risco</h3>
+      <div class="selbolinha" id="selRisco">
+        <button type="button" data-risco="verde" aria-pressed="${a.risco==='verde'}"><span class="bolinha verde"></span> Verde · pode aguardar</button>
+        <button type="button" data-risco="amarelo" aria-pressed="${a.risco==='amarelo'}"><span class="bolinha amarelo"></span> Amarelo · importante</button>
+        <button type="button" data-risco="vermelho" aria-pressed="${a.risco==='vermelho'}"><span class="bolinha vermelho"></span> Vermelho · risco de vida</button>
+      </div>
+      <p style="font-size:.85rem;color:var(--tinta-2);margin-top:8px">${a.risco
+        ? 'Marcado por '+esc(a.riscoPor||'—')+(a.riscoConfirmado?' · confirmado por enfermeiro':' · aguardando confirmação do enfermeiro')
+        : 'Ainda sem cor.'}</p>
+
+      <div class="campo" style="margin-top:14px"><label for="s-notas">Anotações da enfermagem</label><textarea id="s-notas" placeholder="Evolução, condutas, encaminhamento...">${esc(a.anotacoes||'')}</textarea></div>
+      <div class="linha-botoes">
+        <button class="btn" id="btnSalvarFicha">Salvar na ficha</button>
+        ${podeFinalizar?'<button class="btn neutro" id="btnFinalizar">Encaminhar / finalizar</button>':''}
+      </div>
+      ${a.eventos&&a.eventos.length?`<h3 style="margin-top:20px">Linha do tempo</h3><ul style="font-size:.88rem;color:var(--tinta-2);padding-left:18px">${a.eventos.map(ev=>`<li>${hora(ev.quando)} — ${esc(ev.texto)}</li>`).join('')}</ul>`:''}
+    </div>`;
+
+  let riscoTmp=a.risco;
+  $$('#selRisco button').forEach(b=>b.addEventListener('click',()=>{
+    riscoTmp = (riscoTmp===b.dataset.risco)? null : b.dataset.risco;
+    $$('#selRisco button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.risco===riscoTmp));
+  }));
+
+  $('#btnSalvarFicha').addEventListener('click', async ()=>{
+    const at=Banco.pega('atendimentos',atId);
+    const sinais={pa:$('#s-pa').value.trim(), pag:$('#s-pag').value.trim(), fc:$('#s-fc').value.trim(),
+      fr:$('#s-fr').value.trim(), temp:$('#s-temp').value.trim(), spo2:$('#s-spo2').value.trim(),
+      glicemia:$('#s-glic').value.trim(), peso:$('#s-peso').value.trim(),
+      medidoPor:sessao.nome, medidoEm:Date.now()};
+    const eventos=(at.eventos||[]).slice();
+    if(riscoTmp!==at.risco) eventos.push({quando:Date.now(), texto:'Risco '+(riscoTmp||'removido')+' por '+sessao.nome+' ('+sessao.papel+')'});
+    eventos.push({quando:Date.now(), texto:'Sinais vitais registrados por '+sessao.nome});
+    await Banco.salva('atendimentos',atId,Object.assign({},at,{
+      sinais, anotacoes:$('#s-notas').value, risco:riscoTmp,
+      riscoPor: riscoTmp? sessao.nome+' ('+sessao.coren+')' : null,
+      riscoConfirmado: riscoTmp? (sessao.papel==='enfermeiro') : false,
+      status: at.status==='aguardando'&&riscoTmp?'em atendimento':at.status,
+      eventos
+    }));
+    await registrar('Registrou sinais vitais e risco '+(riscoTmp||'nenhum'), at.senhaChamada);
+    Aviso.mostrar('Ficha salva.');
+    desenhaFila();
+  });
+  const bf=$('#btnFinalizar');
+  if(bf) bf.addEventListener('click', async ()=>{
+    const at=Banco.pega('atendimentos',atId);
+    if(!at.risco){ Aviso.mostrar('Classifique o risco antes de finalizar.'); return; }
+    const eventos=(at.eventos||[]).concat([{quando:Date.now(), texto:'Atendimento finalizado por '+sessao.nome}]);
+    await Banco.salva('atendimentos',atId,Object.assign({},at,{status:'finalizado', riscoConfirmado:true, eventos}));
+    await registrar('Finalizou o atendimento', at.senhaChamada);
+    selecionado=null; $('#fichaPaciente').innerHTML='<div class="cartao vazio">Selecione um paciente na fila para abrir a ficha.</div>';
+    Aviso.mostrar('Atendimento finalizado e enviado ao histórico.');
+    desenhaFila();
+  });
+}
+
+/* =========================================================================
+   10) DADOS DE EXEMPLO (para testar sem digitar tudo)
+   ========================================================================= */
+$('#btnDemo').addEventListener('click', async ()=>{
+  const modelos=[
+    {nome:'Marina Alves de Souza', nomeSocial:'', nascimento:'1958-03-12', cpf:'11144477735', rg:'12.345.678-9',
+     telefone:'(16) 99888-1122', sangue:'O+', alergias:'Dipirona', doencas:['Hipertensão','Diabetes'],
+     motivo:'Dor no peito e falta de ar', sintomas:'Começou depois do almoço, aperto no peito que vai para o braço esquerdo.', dor:9,
+     ac:{nome:'Paulo Souza', parentesco:'Filho', telefone:'(16) 99777-3311'}},
+    {nome:'Renan Batista Lima', nomeSocial:'', nascimento:'1994-11-02', cpf:'52998224725', rg:'33.221.114-0',
+     telefone:'(16) 99444-7788', sangue:'A+', alergias:'nenhuma', doencas:['Asma'],
+     motivo:'Corte profundo na mão', sintomas:'Cortei com faca cozinhando, sangrou bastante mas parou com pano.', dor:6,
+     ac:{nome:'', parentesco:'', telefone:''}},
+    {nome:'Cecília Prado Nogueira', nomeSocial:'Ceci', nascimento:'2016-07-21', cpf:'15350946056', rg:'44.556.677-1',
+     telefone:'(16) 99333-2211', sangue:'B+', alergias:'Penicilina', doencas:[],
+     motivo:'Febre há dois dias', sintomas:'Febre de 38,5, sem tosse, comendo pouco.', dor:3,
+     ac:{nome:'Juliana Prado', parentesco:'Mãe', telefone:'(16) 99333-2211'}}
+  ];
+  let n=0;
+  for(const m of modelos){
+    if(Banco.lista('pacientes').some(p=>p.cpf===m.cpf)) continue;
+    const pid=id();
+    await Banco.salva('pacientes',pid,{
+      nome:m.nome, nomeSocial:m.nomeSocial, nascimento:m.nascimento, cpf:m.cpf, rg:m.rg,
+      sus:'', govbr:'', telefone:m.telefone, sangue:m.sangue,
+      endereco:{cep:'14400-000',rua:'Rua das Acácias',num:'120',bairro:'Centro',cidade:'Franca',uf:'SP'},
+      alergias:m.alergias, doencas:m.doencas, outras:'', medicamentos:'',
+      emergencia:{nome:m.ac.nome||'—',parentesco:m.ac.parentesco||'—',telefone:m.ac.telefone||'—'},
+      senha:embaralhaSenha('123456'), consentimento:{aceito:true,quando:Date.now(),versao:'1.0'}, criadoEm:Date.now()
+    });
+    await Banco.salva('atendimentos',id(),{
+      pacienteId:pid, senhaChamada:'T'+String(Banco.lista('atendimentos').length+1).padStart(3,'0'),
+      abertoEm:Date.now()-(++n*17*60000), motivo:m.motivo, inicio:'Hoje', sintomas:m.sintomas, dor:m.dor,
+      risco:null, riscoConfirmado:false, status:'aguardando', acompanhante:m.ac, sinais:{}, anotacoes:'',
+      eventos:[{quando:Date.now(), texto:'Ficha aberta pelo paciente'}]
+    });
+  }
+  Aviso.mostrar(n?'Pacientes de exemplo criados (senha 123456).':'Os exemplos já estavam criados.');
+});
+
+montaEscala();
+Banco.aoMudar(()=>{
+  if($('#tela-prof-painel').classList.contains('ativa')) desenhaFila();
+  if($('#tela-paciente-painel').classList.contains('ativa')) desenhaPaciente();
+});
+Banco.iniciar();
+setInterval(()=>{ if($('#tela-prof-painel').classList.contains('ativa')) desenhaFila(); }, 60000);
+</script>
+</body>
+</html>
